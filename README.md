@@ -1,66 +1,185 @@
-# MetaTrace
+# MetaTrace Lite
 
-![Version](https://img.shields.io/badge/version-0.1--alpha-orange)
+![Version](https://img.shields.io/badge/version-0.2.0--alpha-orange)
+![Status](https://img.shields.io/badge/status-active%20development-yellow)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.x-green)
 
-Lightweight forensic tool for extracting and analyzing image metadata (EXIF).
+Lightweight forensic tool focused on image metadata extraction, EXIF analysis, and forensic indicator detection.
+
+Designed to support evidence inspection through structured metadata parsing, suspicious pattern detection, and clean JSON reporting.
 
 ---
 
-## Objective
+## Overview
 
-Provide a simple and modular tool for:
+MetaTrace Lite is a modular Python-based forensic tool created for the inspection and preliminary analysis of image metadata.
 
-* Extracting EXIF metadata from images
-* Structuring metadata into JSON format
-* Preparing data for forensic analysis
+The project focuses on:
 
----
+- EXIF metadata extraction
+- GPS metadata detection
+- Editing software identification
+- Missing EXIF detection
+- Structured JSON forensic reporting
 
-## Features
+The objective is not attribution, but forensic visibility.
 
-### 1. **EXIF Extraction**
-
-Reads metadata using `exifread`:
-
-* Camera information
-* Timestamps (`DateTimeOriginal`)
-* Software used
-* GPS structures (if present)
+Metadata is evidence support — never final proof.
 
 ---
 
-### 2. **Data Normalization**
+## Core Workflow
 
-* Converts all metadata to string format
-* Ensures compatibility with JSON output
-* Removes non-serializable objects
+```text
+Input Validation
+        ↓
+Metadata Extraction
+        ↓
+Forensic Analysis
+        ↓
+Structured JSON Output
+```
+
+Modules are separated for integrity, maintainability, and forensic consistency.
 
 ---
 
-### 3. **Noise Filtering**
-
-Ignores non-relevant tags:
-
-* `Thumbnail`
-* `Padding`
+## Current Features
 
 ---
 
-### 4. **JSON Output**
+### 1. EXIF Metadata Extraction
 
-Structured output:
+Uses `ExifRead` to extract available metadata from image files.
+
+Examples:
+
+- Camera manufacturer
+- Camera model
+- Original timestamp
+- Editing software
+- GPS metadata
+- EXIF internal structures
+
+---
+
+### 2. Metadata Normalization
+
+Ensures all extracted values are safely converted into JSON-compatible strings.
+
+This avoids:
+
+- serialization failures
+- parser inconsistencies
+- unsupported object output
+
+---
+
+### 3. Noise Filtering
+
+Automatically ignores irrelevant or noisy EXIF tags such as:
+
+- `Thumbnail`
+- `Padding`
+
+This improves readability and forensic focus.
+
+---
+
+### 4. Forensic Analysis Engine
+
+Basic analysis currently includes:
+
+#### GPS Presence Detection
+
+Checks for:
+
+- `GPS GPSLatitude`
+- `GPS GPSLongitude`
+
+Used to identify potential location exposure.
+
+---
+
+#### Editing Software Detection
+
+Detects common editing tools such as:
+
+- Adobe Photoshop
+- GIMP
+- Lightroom
+- Canva
+- Snapseed
+
+Used as a forensic indicator of possible image processing.
+
+---
+
+#### Missing EXIF Detection
+
+Detects absence of metadata.
+
+Important for:
+
+- screenshots
+- exported images
+- sanitized files
+- possible metadata stripping
+
+Absence of EXIF is not proof of tampering.
+
+---
+
+### 5. Structured JSON Reporting
+
+Example output:
 
 ```json
 {
-  "filename": "image.jpg",
-  "metadata": {
-    "EXIF DateTimeOriginal": "...",
-    "Image Software": "..."
-  }
+    "filename": "samples/example.jpg",
+    "metadata": {
+        "Image Software": "Adobe Photoshop",
+        "EXIF DateTimeOriginal": "2026:04:23 21:31:43"
+    },
+    "analysis": {
+        "gps_present": false,
+        "editing_software_detected": true,
+        "exif_missing": false
+    }
 }
 ```
+
+---
+
+## Project Structure
+
+```text
+metatrace-lite/
+│
+├── main.py
+├── extractor.py
+├── analyzer.py
+├── utils.py
+├── requirements.txt
+├── README.md
+├── LICENSE
+└── samples/
+```
+
+---
+
+## Module Responsibilities
+
+| File | Responsibility |
+|---|---|
+| `main.py` | CLI execution flow |
+| `utils.py` | Input validation |
+| `extractor.py` | EXIF metadata extraction |
+| `analyzer.py` | Forensic analysis engine |
+| `samples/` | Test images |
+
+This separation preserves evidence integrity and simplifies expansion.
 
 ---
 
@@ -80,6 +199,8 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Single Image Analysis
+
 ```bash
 python3 main.py <image_path>
 ```
@@ -87,61 +208,109 @@ python3 main.py <image_path>
 ### Example
 
 ```bash
-python3 main.py samples/exp.jpg
+python3 main.py samples/example.jpg
 ```
 
 ---
 
 ## Requirements
 
-| Component | Required | Notes               |
-| --------- | -------- | ------------------- |
-| Python 3  | ✅        | Tested on 3.x       |
-| exifread  | ✅        | Metadata extraction |
+| Component | Required | Notes |
+|---|---:|---|
+| Python 3 | ✅ | Tested on Python 3.x |
+| ExifRead | ✅ | Metadata extraction engine |
 
 ---
 
 ## Known Limitations
 
-### File Format
+---
 
-* PNG images may not contain full EXIF data
-* Some metadata fields may be missing
+### Metadata Trust
 
-### Data Integrity
+EXIF metadata is not inherently trustworthy.
 
-* EXIF metadata can be modified or removed
-* No authenticity validation implemented
+It can be:
 
-### Parsing
+- modified
+- removed
+- rewritten
+- sanitized
+- forged
 
-* Output depends on image source and encoding
-* Some tags may appear inconsistent
+Never rely exclusively on metadata for attribution.
+
+---
+
+### GPS Reliability
+
+GPS structures may exist without usable coordinates.
+
+Some files contain partial GPS tags only.
+
+This requires deeper parsing in future versions.
+
+---
+
+### File Format Limitations
+
+Some formats (especially PNG) may contain limited or no EXIF information.
+
+This is expected behavior.
+
+---
+
+## Security Considerations
+
+### Principle of Evidence Integrity
+
+Original metadata must never be altered during analysis.
+
+The tool separates:
+
+- raw evidence (`metadata`)
+- interpretation (`analysis`)
+
+This is mandatory for forensic reliability.
+
+---
+
+### Sensitive Metadata Exposure
+
+GPS coordinates may expose:
+
+- exact locations
+- home addresses
+- operational sites
+
+Do not disclose sensitive metadata without operational necessity.
+
+Follow the Principle of Least Privilege.
 
 ---
 
 ## Roadmap
 
-* [ ] Directory support (multiple images)
-* [ ] CLI flags (`--json`, `--pretty`)
-* [ ] Basic forensic analysis module
-* [ ] Metadata filtering and classification
-* [ ] GPS parsing (coordinates)
+### v0.2.x
 
----
+- [ ] suspicious flags system
+- [ ] partial GPS detection
+- [ ] timestamp consistency analysis
+- [ ] better error handling
 
-## Tool Security
+### v0.3.x
 
-### Metadata Trust
+- [ ] directory analysis support
+- [ ] recursive scan mode
+- [ ] output export (`--output report.json`)
+- [ ] CLI flags (`--pretty`, `--json`, `--recursive`)
 
-* EXIF data is **not trustworthy**
-* Can be modified or stripped (MITRE ATT&CK T1565)
+### Future
 
-### Recommendations
-
-* Do not rely solely on metadata for attribution
-* Cross-check with additional forensic sources
-* Avoid exposing sensitive metadata (e.g. GPS)
+- [ ] GPS coordinate parsing
+- [ ] forensic report generator
+- [ ] metadata classification engine
+- [ ] timeline correlation support
 
 ---
 
@@ -149,24 +318,47 @@ python3 main.py samples/exp.jpg
 
 Pull requests are welcome.
 
-* Keep code modular
-* Follow current structure
-* Avoid unnecessary dependencies
+Guidelines:
+
+- keep code modular
+- preserve forensic consistency
+- avoid unnecessary dependencies
+- prioritize reliability over features
+
+In forensic tooling:
+
+correctness > complexity
+
+always.
 
 ---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE)
+MIT License
+
+See:
+
+```text
+LICENSE
+```
 
 ---
 
 ## Disclaimer
 
-This tool is intended for forensic analysis on systems and files you are authorized to inspect.
+This tool is intended for authorized forensic inspection and security analysis only.
+
+Do not use against systems, files, or evidence you are not legally authorized to inspect.
+
+Unauthorized forensic collection may violate local law and operational policy.
 
 ---
 
-## Contact
+## Author
 
-GitHub: https://github.com/rodrigo-tripa
+Developed by Rodrigo-Tripa
+
+GitHub:
+
+https://github.com/rodrigo-tripa
