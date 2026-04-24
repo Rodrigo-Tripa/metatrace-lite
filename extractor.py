@@ -1,3 +1,6 @@
+# Part of the MetaTrace Lite forensic framework, developed by Rodrigo-Tripa (GitHub).
+# Module responsible for metadata processing, forensic analysis, and structured output handling.
+
 import exifread
 
 def extract_metadata(path):

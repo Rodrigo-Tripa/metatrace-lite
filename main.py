@@ -1,5 +1,11 @@
+# Name: MetaTrace Lite
+# Author: Rodrigo-Tripa (GitHub)
+# Description: Lightweight forensic tool for extracting and analyzing image metadata (EXIF).
+# Version: 0.2.0-alpha
+
 from utils import validate_input_path
 from extractor import extract_metadata
+from analyzer import analyze_metadata
 import json, sys
 
 def main():
@@ -17,6 +23,8 @@ def main():
 
         # 4. Extract metadata from the validated path
         result = extract_metadata(validated_path)
+        analysis = analyze_metadata(result["metadata"])
+        result["analysis"] = analysis
 
         # 5. Print the structured result as JSON
         print(json.dumps(result, indent=4))
