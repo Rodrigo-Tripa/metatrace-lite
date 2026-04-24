@@ -3,11 +3,11 @@ import exifread
 def extract_metadata(path):
     # Open the image file in binary mode and process EXIF tags
     with open(path, 'rb') as file:
-        dados_limpo = exifread.process_file(file)
+        exif_data = exifread.process_file(file)
 
     metadata = {}
 
-    for key, value in dados_limpo.items():
+    for key, value in exif_data.items():
         # Filter out noise tags like Thumbnails or Padding to keep data clean
         if "Thumbnail" in key or "Padding" in key:
             continue
