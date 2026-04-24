@@ -1,0 +1,12 @@
+{
+    "filename": "samples/photo_test.jpg",
+    "metadata": {
+        "Image Make": "Apple",
+        "Image Model": "iPhone 13 Pro",
+        "Image Software": "15.4.1",
+        "EXIF DateTimeOriginal": "2023:05:12 14:30:22",
+        "EXIF ExifImageWidth": "4032",
+        "EXIF ExifImageLength": "3024",
+        "EXIF ExposureTime": "1/120"
+    }
+}
