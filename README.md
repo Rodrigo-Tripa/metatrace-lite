@@ -1,6 +1,6 @@
 # MetaTrace Lite
 
-![Version](https://img.shields.io/badge/version-0.2.0--alpha-orange)
+![Version](https://img.shields.io/badge/version-0.2.2--alpha-orange)
 ![Status](https://img.shields.io/badge/status-active%20development-yellow)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.x-green)
@@ -131,6 +131,13 @@ Absence of EXIF is not proof of tampering.
 
 ---
 
+### 5. Automatic JSON Reporting
+
+Every execution automatically generates a detailed report in the `reports/` directory.
+The report filename is derived from the original image name (e.g., `image_report.json`).
+
+---
+
 ### 5. Structured JSON Reporting
 
 Example output:
@@ -159,6 +166,7 @@ metatrace-lite/
 │
 ├── main.py
 ├── extractor.py
+├── reports/
 ├── analyzer.py
 ├── utils.py
 ├── requirements.txt
@@ -174,7 +182,7 @@ metatrace-lite/
 | File | Responsibility |
 |---|---|
 | `main.py` | CLI execution flow |
-| `utils.py` | Input validation |
+| `utils.py` | Input validation and report export |
 | `extractor.py` | EXIF metadata extraction |
 | `analyzer.py` | Forensic analysis engine |
 | `samples/` | Test images |
@@ -293,6 +301,7 @@ Follow the Principle of Least Privilege.
 
 ### v0.2.x
 
+- [x] output export (automatic JSON reporting)
 - [ ] suspicious flags system
 - [ ] partial GPS detection
 - [ ] timestamp consistency analysis
@@ -302,7 +311,6 @@ Follow the Principle of Least Privilege.
 
 - [ ] directory analysis support
 - [ ] recursive scan mode
-- [ ] output export (`--output report.json`)
 - [ ] CLI flags (`--pretty`, `--json`, `--recursive`)
 
 ### Future
