@@ -2,8 +2,12 @@
 # Module responsible for metadata processing, forensic analysis, and structured output handling.
 
 import exifread
+import logging
+
+logger = logging.getLogger(__name__)
 
 def extract_metadata(path):
+    logger.info(f"Extracting metadata from: {path}")
     # Open the image file in binary mode and process EXIF tags
     with open(path, 'rb') as file:
         exif_data = exifread.process_file(file)
@@ -19,6 +23,8 @@ def extract_metadata(path):
         key_str = str(key)
         value_str = str(value)
         metadata[key_str] = value_str
+
+    logger.debug(f"Successfully extracted {len(metadata)} tags.")
 
     # Structure the final result including the source filename
     result = {
