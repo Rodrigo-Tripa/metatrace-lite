@@ -3,7 +3,7 @@
 # Description: Lightweight forensic tool for extracting and analyzing image metadata (EXIF).
 # Version: 0.2.0-alpha
 
-from utils import validate_input_path
+from utils import validate_input_path, export_metadata_to_file
 from extractor import extract_metadata
 from analyzer import analyze_metadata
 import json
@@ -35,6 +35,10 @@ def main():
         # 5. Print the structured result as JSON
         # (Note: standard print is kept here as it is the tool's intended data output)
         print(json.dumps(result, indent=4))
+
+        # 6. Export metadata to a JSON file
+        report_file = export_metadata_to_file(result, validated_path)
+        logger.info(f"Report successfully exported to: {report_file}")
 
     except FileNotFoundError:
         logger.error(f"File not found: {path}")

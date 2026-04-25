@@ -22,10 +22,7 @@ def _check_gps_presence(metadata):
 def _check_editing_software(metadata):
     image_software = metadata.get("Image Software", "")
     softwares = ["Photoshop", "GIMP", "Lightroom", "Canva", "Snapseed"]
-    for software in softwares:
-        if software in image_software:
-            return True
-    return False
+    return any(software in image_software for software in softwares)
 
 
 def _check_exif_missing(metadata):

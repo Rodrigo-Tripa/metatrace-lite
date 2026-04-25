@@ -2,6 +2,7 @@
 # Module responsible for metadata processing, forensic analysis, and structured output handling.
 
 import os
+import json
 
 def validate_input_path(path):
     # Define the list of supported image file extensions
@@ -20,3 +21,18 @@ def validate_input_path(path):
         raise ValueError(f"Unsupported file type: {path}")
 
     return path
+
+def export_metadata_to_file(data, original_path, folder_name="reports"):
+    # Cria a pasta automaticamente se não existir
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+
+    # Gera o nome do relatório baseado no ficheiro original
+    base_name = os.path.basename(original_path)
+    file_name_no_ext = os.path.splitext(base_name)[0]
+    report_path = os.path.join(folder_name, f"{file_name_no_ext}_report.json")
+
+    with open(report_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4)
+
+    return report_path
