@@ -7,6 +7,13 @@
         "EXIF DateTimeOriginal": "2023:05:12 14:30:22",
         "EXIF ExifImageWidth": "4032",
         "EXIF ExifImageLength": "3024",
-        "EXIF ExposureTime": "1/120"
+        "EXIF ExposureTime": "1/120",
+        "GPS GPSLatitude": "34,56,123/100",
+        "GPS GPSLongitude": "12,34,567/100"
+    },
+    "analysis": {
+        "gps_present": true,
+        "editing_software_detected": false,
+        "exif_missing": false
     }
 }
