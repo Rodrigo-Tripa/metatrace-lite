@@ -157,82 +157,8 @@ Example output:
 }
 ```
 
----
-
-## Project Structure
-
-```text
-metatrace-lite/
-│
-├── main.py
-├── extractor.py
-├── reports/
-├── analyzer.py
-├── utils.py
-├── requirements.txt
-├── README.md
-├── LICENSE
-└── samples/
-```
-
----
-
-## Module Responsibilities
-
-| File | Responsibility |
-|---|---|
-| `main.py` | CLI execution flow |
-| `utils.py` | Input validation and report export |
-| `extractor.py` | EXIF metadata extraction |
-| `analyzer.py` | Forensic analysis engine |
-| `samples/` | Test images |
-
-This separation preserves evidence integrity and simplifies expansion.
-
----
-
-## Installation
-
-```bash
-git clone https://github.com/rodrigo-tripa/metatrace-lite.git
-cd metatrace-lite
-
-python3 -m venv venv
-source venv/bin/activate
-
-pip install -r requirements.txt
-```
-
----
-
-## Usage
-
-### Single Image Analysis
-
-```bash
-python3 main.py <image_path>
-```
-
-### Example
-
-```bash
-python3 main.py samples/example.jpg
-```
-
----
-
-## Requirements
-
-| Component | Required | Notes |
-|---|---:|---|
-| Python 3 | ✅ | Tested on Python 3.x |
-| ExifRead | ✅ | Metadata extraction engine |
-
----
-
 ## Known Limitations
 
----
 
 ### Metadata Trust
 
@@ -299,28 +225,12 @@ Follow the Principle of Least Privilege.
 
 ## Roadmap
 
-### v0.2.x
+- [x] Refatoração para `pathlib` e `argparse`.
+- [ ] Suporte para processamento em lote (diretórios).
+- [ ] Extração de dados XMP e Perfis ICC.
+- [ ] Conversão de coordenadas GPS para formato legível (Decimal Degrees).
+- [ ] Interface Web simplificada para upload de evidências.
 
-- [x] output export (automatic JSON reporting)
-- [ ] suspicious flags system
-- [ ] partial GPS detection
-- [ ] timestamp consistency analysis
-- [ ] better error handling
-
-### v0.3.x
-
-- [ ] directory analysis support
-- [ ] recursive scan mode
-- [ ] CLI flags (`--pretty`, `--json`, `--recursive`)
-
-### Future
-
-- [ ] GPS coordinate parsing
-- [ ] forensic report generator
-- [ ] metadata classification engine
-- [ ] timeline correlation support
-
----
 
 ## Contributing
 
