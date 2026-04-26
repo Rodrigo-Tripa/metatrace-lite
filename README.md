@@ -45,6 +45,21 @@ Modules are separated for integrity, maintainability, and forensic consistency.
 
 ---
 
+## Usage
+
+To run a forensic analysis on an image, use the following command:
+
+```bash
+python metatrace.py [IMAGE_PATH]
+```
+
+### Available Arguments:
+
+- `IMAGE_PATH`: The relative or absolute path to the image file (e.g., `.jpg`, `.tiff`).
+- `-h, --help`: Show the help message and list all available options.
+
+---
+
 ## Current Features
 
 ---
