@@ -1,38 +1,38 @@
 # Part of the MetaTrace Lite forensic framework, developed by Rodrigo-Tripa (GitHub).
 # Module responsible for metadata processing, forensic analysis, and structured output handling.
 
-import os
+from pathlib import Path
 import json
+from typing import Any, Dict
 
-def validate_input_path(path):
+def validate_input_path(path_str: str) -> Path:
     # Define the list of supported image file extensions
-    allowed_extensions = (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp")
+    allowed_extensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
+    path = Path(path_str)
 
     # Check if the provided path exists on the system
-    if not os.path.exists(path):
+    if not path.exists():
         raise FileNotFoundError(f"Path does not exist: {path}")
 
     # Ensure the path points to a file and not a directory
-    if not os.path.isfile(path):
+    if not path.is_file():
         raise ValueError(f"Path is not a file: {path}")
 
     # Verify that the file extension is supported
-    if not path.lower().endswith(allowed_extensions):
-        raise ValueError(f"Unsupported file type: {path}")
+    if path.suffix.lower() not in allowed_extensions:
+        raise ValueError(f"Unsupported file type: {path.suffix}")
 
     return path
 
-def export_metadata_to_file(data, original_path, folder_name="reports"):
-    # Cria a pasta automaticamente se não existir
-    if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
+def export_metadata_to_file(data: Dict[str, Any], input_path: Path, folder_name: str = "reports") -> Path:
+    # Create the folder automatically if it doesn't exist
+    output_dir = Path(folder_name)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Gera o nome do relatório baseado no ficheiro original
-    base_name = os.path.basename(original_path)
-    file_name_no_ext = os.path.splitext(base_name)[0]
-    report_path = os.path.join(folder_name, f"{file_name_no_ext}_report.json")
+    # Generate report name based on the original file using .stem (filename without extension)
+    report_path = output_dir / f"{input_path.stem}_report.json"
 
-    with open(report_path, 'w', encoding='utf-8') as f:
+    with report_path.open('w', encoding='utf-8') as f:
         json.dump(data, f, indent=4)
 
     return report_path

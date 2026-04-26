@@ -6,6 +6,7 @@
 from utils import validate_input_path, export_metadata_to_file
 from extractor import extract_metadata
 from analyzer import analyze_metadata
+import argparse
 import json
 import sys
 import logging
@@ -15,13 +16,20 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 def main():
-    # 1. Verify command line arguments
-    if len(sys.argv) < 2:
-        logger.warning("Usage: python3 main.py <image_path>")
-        return
+    # 1. Setup Argument Parser for better CLI experience
+    parser = argparse.ArgumentParser(
+        description="MetaTrace Lite: Lightweight forensic tool for image metadata analysis."
+    )
+    parser.add_argument("path", help="Path to the image file to analyze.")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.")
+    
+    args = parser.parse_args()
+    
+    # Adjust log level based on verbosity flag
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
 
-    # 2. Retrieve the input file path
-    path = sys.argv[1]
+    path = args.path
 
     try:
         # 3. Validate the input path and file type
@@ -42,12 +50,19 @@ def main():
 
     except FileNotFoundError:
         logger.error(f"File not found: {path}")
+        sys.exit(1)
     except PermissionError:
         logger.error(f"Permission denied: {path}")
+        sys.exit(1)
     except ValueError as ve:
         logger.error(f"Input validation error: {ve}")
+        sys.exit(1)
     except (IOError, EOFError) as e:
         logger.error(f"Failed to process image file: {e}")
+        sys.exit(1)
+    except Exception as e:
+        logger.critical(f"An unexpected error occurred: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
