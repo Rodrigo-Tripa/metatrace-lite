@@ -225,11 +225,11 @@ Follow the Principle of Least Privilege.
 
 ## Roadmap
 
-- [x] Refatoração para `pathlib` e `argparse`.
-- [ ] Suporte para processamento em lote (diretórios).
-- [ ] Extração de dados XMP e Perfis ICC.
-- [ ] Conversão de coordenadas GPS para formato legível (Decimal Degrees).
-- [ ] Interface Web simplificada para upload de evidências.
+- [x] Refactor to `pathlib` and `argparse`.
+- [ ] Batch processing support (directories).
+- [ ] XMP and ICC Profile data extraction.
+- [ ] GPS coordinate conversion to readable format (Decimal Degrees).
+- [ ] Simplified Web Interface for evidence upload.
 
 
 ## Contributing
