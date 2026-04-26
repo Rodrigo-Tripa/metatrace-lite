@@ -1,7 +1,7 @@
 # MetaTrace Lite
 
-![Version](https://img.shields.io/badge/version-0.2.2--alpha-orange)
-![Status](https://img.shields.io/badge/status-active%20development-yellow)
+![Version](https://img.shields.io/badge/version-2.8.1-blue)
+![Status](https://img.shields.io/badge/status-stable-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.x-green)
 

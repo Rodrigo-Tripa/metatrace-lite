@@ -1,7 +1,7 @@
 # Name: MetaTrace Lite
 # Author: Rodrigo-Tripa (GitHub)
 # Description: Lightweight forensic tool for extracting and analyzing image metadata (EXIF).
-# Version: 0.2.2-alpha
+# Version: 2.8.1
 
 from utils import validate_input_path, export_metadata_to_file
 from extractor import extract_metadata
