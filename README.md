@@ -1,6 +1,6 @@
 # MetaTrace Lite
 
-![Version](https://img.shields.io/badge/version-0.2.8.1-blue)
+![Version](https://img.shields.io/badge/version-0.3-blue)
 ![Status](https://img.shields.io/badge/status-stable-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.x-green)
@@ -17,11 +17,13 @@ MetaTrace Lite is a modular Python-based forensic tool created for the inspectio
 
 The project focuses on:
 
-- EXIF metadata extraction
-- GPS metadata detection
+- EXIF metadata extraction and categorization
+- GPS metadata detection and coordinate conversion
 - Editing software identification
-- Missing EXIF detection
-- Structured JSON forensic reporting
+- Device type detection (phone vs camera)
+- DateTime validation and parsing
+- GPS accuracy assessment
+- Structured JSON forensic reporting with summaries
 
 The objective is not attribution, but forensic visibility.
 
@@ -34,11 +36,11 @@ Metadata is evidence support — never final proof.
 ```text
 Input Validation
         ↓
-Metadata Extraction
+Metadata Extraction & Structuring
         ↓
 Forensic Analysis
         ↓
-Structured JSON Output
+Structured JSON Output with Summary
 ```
 
 Modules are separated for integrity, maintainability, and forensic consistency.
@@ -50,12 +52,14 @@ Modules are separated for integrity, maintainability, and forensic consistency.
 To run a forensic analysis on an image, use the following command:
 
 ```bash
-python metatrace.py [IMAGE_PATH]
+python metatrace.py [IMAGE_PATH] [OPTIONS]
 ```
 
 ### Available Arguments:
 
 - `IMAGE_PATH`: The relative or absolute path to the image file (e.g., `.jpg`, `.tiff`).
+- `-o OUTPUT_DIR, --output-dir OUTPUT_DIR`: Directory to save the report file (default: `reports`).
+- `-v, --verbose`: Enable debug logging.
 - `-h, --help`: Show the help message and list all available options.
 
 ---
@@ -64,58 +68,34 @@ python metatrace.py [IMAGE_PATH]
 
 ---
 
-### 1. EXIF Metadata Extraction
+### 1. EXIF Metadata Extraction & Structuring
 
-Uses `ExifRead` to extract available metadata from image files.
+Uses `ExifRead` to extract available metadata from image files and organizes it into logical categories:
 
-Examples:
-
-- Camera manufacturer
-- Camera model
-- Original timestamp
-- Editing software
-- GPS metadata
-- EXIF internal structures
+- **Camera**: Make, model, software
+- **DateTime**: Original, digitized timestamps (parsed to ISO format)
+- **GPS**: Coordinates (converted to decimal degrees), altitude, DOP
+- **Image**: Resolution, orientation, exposure settings
+- **Other**: Miscellaneous tags
 
 ---
 
-### 2. Metadata Normalization
+### 2. Enhanced Data Parsing
 
-Ensures all extracted values are safely converted into JSON-compatible strings.
-
-This avoids:
-
-- serialization failures
-- parser inconsistencies
-- unsupported object output
+- GPS coordinates converted to decimal degrees for better usability
+- DateTime fields parsed into ISO 8601 format
+- Automatic filtering of noisy tags (thumbnails, padding)
+- JSON-compatible value conversion
 
 ---
 
-### 3. Noise Filtering
+### 3. Forensic Analysis Engine
 
-Automatically ignores irrelevant or noisy EXIF tags such as:
-
-- `Thumbnail`
-- `Padding`
-
-This improves readability and forensic focus.
-
----
-
-### 4. Forensic Analysis Engine
-
-Basic analysis currently includes:
+Comprehensive analysis includes:
 
 #### GPS Presence Detection
 
-Checks for:
-
-- `GPS GPSLatitude`
-- `GPS GPSLongitude`
-
-Used to identify potential location exposure.
-
----
+Checks for valid GPS coordinates and provides decimal conversion.
 
 #### Editing Software Detection
 
@@ -126,34 +106,55 @@ Detects common editing tools such as:
 - Lightroom
 - Canva
 - Snapseed
+- Affinity
+- PicsArt
 
-Used as a forensic indicator of possible image processing.
+#### Device Type Detection
 
----
+Classifies capture device as:
+
+- Phone (Apple, Samsung, Huawei, Xiaomi, Google, OnePlus)
+- Camera (other manufacturers)
+- Unknown
+
+#### DateTime Validation
+
+Verifies presence of valid timestamp information.
+
+#### GPS Accuracy Assessment
+
+Evaluates GPS precision based on Dilution of Precision (DOP):
+
+- High (< 2)
+- Medium (2-5)
+- Low (> 5)
+- Unknown/No GPS
 
 #### Missing EXIF Detection
 
-Detects absence of metadata.
+Identifies files with no metadata (screenshots, exports, sanitized files).
 
-Important for:
+---
 
-- screenshots
-- exported images
-- sanitized files
-- possible metadata stripping
+### 4. Readable JSON Output with Summary
 
-Absence of EXIF is not proof of tampering.
+Every execution generates a detailed report with:
+
+- **Filename**: Source file path
+- **Metadata**: Categorized EXIF data
+- **Analysis**: Forensic indicators
+- **Summary**: Human-readable highlights (device, date, location, key findings)
 
 ---
 
 ### 5. Automatic JSON Reporting
 
-Every execution automatically generates a detailed report in the `reports/` directory.
+Reports are automatically saved to the specified output directory.
 The report filename is derived from the original image name (e.g., `image_report.json`).
 
 ---
 
-### 5. Structured JSON Reporting
+### 6. Structured JSON Reporting
 
 Example output:
 
@@ -161,19 +162,39 @@ Example output:
 {
     "filename": "samples/example.jpg",
     "metadata": {
-        "Image Software": "Adobe Photoshop",
-        "EXIF DateTimeOriginal": "2026:04:23 21:31:43"
+        "camera": {
+            "make": "Apple",
+            "model": "iPhone 12",
+            "software": "12.1.2"
+        },
+        "datetime": {
+            "datetime_original": "2021-05-15T14:30:45"
+        },
+        "gps": {
+            "decimal_latitude": 40.7128,
+            "decimal_longitude": -74.0060,
+            "gpsaltitude": "10",
+            "gpsdop": "3.5"
+        }
     },
     "analysis": {
-        "gps_present": false,
-        "editing_software_detected": true,
-        "exif_missing": false
+        "gps_present": true,
+        "editing_software_detected": false,
+        "exif_missing": false,
+        "device_type": "phone",
+        "datetime_valid": true,
+        "gps_accuracy": "medium"
+    },
+    "summary": {
+        "device": "Apple iPhone 12",
+        "capture_date": "2021-05-15T14:30:45",
+        "location": "Lat: 40.7128, Lon: -74.0060",
+        "highlights": "Captured on mobile device; Contains GPS data"
     }
 }
 ```
 
 ## Known Limitations
-
 
 ### Metadata Trust
 
@@ -197,7 +218,7 @@ GPS structures may exist without usable coordinates.
 
 Some files contain partial GPS tags only.
 
-This requires deeper parsing in future versions.
+Coordinate conversion assumes standard formats.
 
 ---
 
@@ -219,6 +240,7 @@ The tool separates:
 
 - raw evidence (`metadata`)
 - interpretation (`analysis`)
+- summary (`summary`)
 
 This is mandatory for forensic reliability.
 
@@ -241,11 +263,13 @@ Follow the Principle of Least Privilege.
 ## Roadmap
 
 - [x] Refactor to `pathlib` and `argparse`.
+- [x] Structured metadata extraction with categorization.
+- [x] GPS coordinate conversion to decimal degrees.
+- [x] Enhanced forensic analysis (device type, datetime, GPS accuracy).
+- [x] Readable JSON output with summary section.
 - [ ] Batch processing support (directories).
 - [ ] XMP and ICC Profile data extraction.
-- [ ] GPS coordinate conversion to readable format (Decimal Degrees).
 - [ ] Simplified Web Interface for evidence upload.
-
 
 ## Contributing
 
