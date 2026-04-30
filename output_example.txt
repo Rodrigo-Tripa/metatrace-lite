@@ -1,19 +1,50 @@
 {
-    "filename": "samples/photo_test.jpg",
+    "filename": "/home/user/samples/photo_test.jpg",
     "metadata": {
-        "Image Make": "Apple",
-        "Image Model": "iPhone 13 Pro",
-        "Image Software": "15.4.1",
-        "EXIF DateTimeOriginal": "2023:05:12 14:30:22",
-        "EXIF ExifImageWidth": "4032",
-        "EXIF ExifImageLength": "3024",
-        "EXIF ExposureTime": "1/120",
-        "GPS GPSLatitude": "34,56,123/100",
-        "GPS GPSLongitude": "12,34,567/100"
+        "camera": {
+            "make": "Apple",
+            "model": "iPhone 13 Pro",
+            "software": "15.4.1"
+        },
+        "datetime": {
+            "datetime_original": "2023-05-12T14:30:22",
+            "datetime_digitized": "2023-05-12T14:30:22"
+        },
+        "gps": {
+            "decimal_latitude": 34.9336,
+            "decimal_longitude": 12.5828,
+            "gpslatitude": "[34, 56, 123/100]",
+            "gpslongitude": "[12, 34, 567/100]",
+            "gpslatituderef": "N",
+            "gpslongituderef": "E",
+            "gpsaltitude": "150",
+            "gpsdop": "2.8"
+        },
+        "image": {
+            "exifimagewidth": "4032",
+            "exifimagelength": "3024",
+            "exposuretime": "1/120",
+            "fnumber": "8/5",
+            "isospeedratings": "50"
+        },
+        "other": {
+            "image_orientation": "1",
+            "image_xresolution": "72",
+            "image_yresolution": "72"
+        }
     },
     "analysis": {
         "gps_present": true,
         "editing_software_detected": false,
-        "exif_missing": false
+        "exif_missing": false,
+        "device_type": "phone",
+        "datetime_valid": true,
+        "gps_accuracy": "high"
+    },
+    "summary": {
+        "device": "Apple iPhone 13 Pro",
+        "capture_date": "2023-05-12T14:30:22",
+        "location": "Lat: 34.9336, Lon: 12.5828",
+        "highlights": "Captured on mobile device; Contains GPS data"
     }
 }
