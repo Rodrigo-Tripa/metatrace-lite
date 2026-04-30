@@ -1,7 +1,7 @@
 # Name: MetaTrace Lite
 # Author: Rodrigo-Tripa (GitHub)
 # Description: Lightweight forensic tool for extracting and analyzing image metadata (EXIF).
-# Version: 0.2.8.1
+# Version: 0.3.0
 
 from utils import validate_input_path, export_metadata_to_file
 from extractor import extract_metadata
@@ -10,10 +10,44 @@ import argparse
 import json
 import sys
 import logging
+from typing import Dict, Any
 
 # Configure logging: levels and format
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
+
+def _generate_summary(metadata: Dict[str, Any], analysis: Dict[str, Any]) -> Dict[str, str]:
+    """Generates a human-readable summary of the metadata and analysis."""
+    summary = {}
+
+    # Camera info
+    camera = metadata.get("camera", {})
+    if camera.get("make") or camera.get("model"):
+        summary["device"] = f"{camera.get('make', 'Unknown')} {camera.get('model', '')}".strip()
+
+    # Date
+    dt = metadata.get("datetime", {})
+    if dt.get("datetime_original"):
+        summary["capture_date"] = dt["datetime_original"]
+
+    # GPS
+    gps = metadata.get("gps", {})
+    if analysis.get("gps_present"):
+        lat = gps.get("decimal_latitude")
+        lon = gps.get("decimal_longitude")
+        summary["location"] = f"Lat: {lat}, Lon: {lon}"
+
+    # Analysis highlights
+    highlights = []
+    if analysis.get("editing_software_detected"):
+        highlights.append("Edited with software")
+    if analysis.get("gps_present"):
+        highlights.append("Contains GPS data")
+    if analysis.get("device_type") == "phone":
+        highlights.append("Captured on mobile device")
+    summary["highlights"] = "; ".join(highlights) if highlights else "No notable findings"
+
+    return summary
 
 def main():
     # 1. Setup Argument Parser for better CLI experience
@@ -22,6 +56,7 @@ def main():
     )
     parser.add_argument("path", help="Path to the image file to analyze.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.")
+    parser.add_argument("-o", "--output-dir", default="reports", help="Directory to save the report file.")
     
     args = parser.parse_args()
     
@@ -40,12 +75,15 @@ def main():
         analysis = analyze_metadata(result["metadata"])
         result["analysis"] = analysis
 
+        # Add a summary for better readability
+        result["summary"] = _generate_summary(result["metadata"], analysis)
+
         # 5. Print the structured result as JSON
         # (Note: standard print is kept here as it is the tool's intended data output)
         print(json.dumps(result, indent=4))
 
         # 6. Export metadata to a JSON file
-        report_file = export_metadata_to_file(result, validated_path)
+        report_file = export_metadata_to_file(result, validated_path, args.output_dir)
         logger.info(f"Report successfully exported to: {report_file}")
 
     except FileNotFoundError:
