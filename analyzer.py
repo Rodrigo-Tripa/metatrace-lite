@@ -44,8 +44,7 @@ def _check_exif_missing(metadata: Dict[str, Any]) -> bool:
 def _check_datetime_valid(metadata: Dict[str, Any]) -> bool:
     """Checks if datetime information is present and valid."""
     dt = metadata.get("datetime", {})
-    return bool(dt.get("datetime_original") or dt.get("datetime_digitized"))
-
+    return bool(dt.get("datetimeoriginal") or dt.get("datetimedigitized"))
 def _check_gps_accuracy(metadata: Dict[str, Any]) -> str:
     """Assesses GPS accuracy based on available data."""
     gps = metadata.get("gps", {})
