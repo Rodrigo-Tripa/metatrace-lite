@@ -1,6 +1,6 @@
 # MetaTrace Lite
 
-![Version](https://img.shields.io/badge/version-0.3-blue)
+![Version](https://img.shields.io/badge/version-0.4.0-blue)
 ![Status](https://img.shields.io/badge/status-stable-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.x-green)
@@ -52,7 +52,7 @@ Modules are separated for integrity, maintainability, and forensic consistency.
 To run a forensic analysis on an image, use the following command:
 
 ```bash
-python metatrace.py [IMAGE_PATH] [OPTIONS]
+python main.py [IMAGE_PATH] [OPTIONS]
 ```
 
 ### Available Arguments:
@@ -61,6 +61,30 @@ python metatrace.py [IMAGE_PATH] [OPTIONS]
 - `-o OUTPUT_DIR, --output-dir OUTPUT_DIR`: Directory to save the report file (default: `reports`).
 - `-v, --verbose`: Enable debug logging.
 - `-h, --help`: Show the help message and list all available options.
+
+---
+
+## Testing
+
+The project includes automated tests to ensure reliability and correctness. To run the tests:
+
+```bash
+pytest
+```
+
+Tests cover the core modules: `utils`, `analyzer`, and `extractor`.
+
+---
+
+## Project Cleanup
+
+A cleanup script is provided to remove generated reports and sample files:
+
+```bash
+./cleanup.sh
+```
+
+This script will clean the `reports/` and `samples/` directories and optionally remove the `tests/` folder.
 
 ---
 
