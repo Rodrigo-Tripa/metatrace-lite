@@ -339,7 +339,3 @@ Unauthorized forensic collection may violate local law and operational policy.
 ## Author
 
 Developed by Rodrigo-Tripa
-
-GitHub:
-
-https://github.com/rodrigo-tripa
