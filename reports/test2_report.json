@@ -1,0 +1,71 @@
+{
+    "filename": "samples/test2.jpg",
+    "metadata": {
+        "camera": {
+            "make": "Canon",
+            "model": "Canon EOS 40D",
+            "orientation": "Horizontal (normal)",
+            "xresolution": "72",
+            "yresolution": "72",
+            "resolutionunit": "Pixels/Inch",
+            "software": "GIMP 2.4.5",
+            "datetime": "2008:07:31 10:38:11",
+            "ycbcrpositioning": "Co-sited",
+            "exifoffset": "214",
+            "gpsinfo": "978"
+        },
+        "datetime": {
+            "datetimeoriginal": "2008-05-30T15:56:01",
+            "datetimedigitized": "2008-05-30T15:56:01"
+        },
+        "gps": {
+            "gpsversionid": "[2, 2, 0, 0]"
+        },
+        "image": {
+            "exposuretime": "1/160",
+            "fnumber": "71/10",
+            "exposureprogram": "Manual",
+            "isospeedratings": "100",
+            "exifversion": "0221",
+            "componentsconfiguration": "YCbCr",
+            "shutterspeedvalue": "59/8",
+            "aperturevalue": "45/8",
+            "exposurebiasvalue": "0",
+            "meteringmode": "Pattern",
+            "flash": "Flash fired, compulsory flash mode",
+            "focallength": "135",
+            "usercomment": "",
+            "subsectime": "00",
+            "subsectimeoriginal": "00",
+            "subsectimedigitized": "00",
+            "flashpixversion": "0100",
+            "colorspace": "sRGB",
+            "exifimagewidth": "100",
+            "exifimagelength": "68",
+            "interoperabilityoffset": "948",
+            "focalplanexresolution": "324000/73",
+            "focalplaneyresolution": "2592000/583",
+            "focalplaneresolutionunit": "2",
+            "customrendered": "Normal",
+            "exposuremode": "Manual Exposure",
+            "whitebalance": "Auto",
+            "scenecapturetype": "Standard"
+        },
+        "other": {
+            "interoperability_interoperabilityindex": "R98",
+            "interoperability_interoperabilityversion": "[48, 49, 48, 48]"
+        }
+    },
+    "analysis": {
+        "gps_present": false,
+        "editing_software_detected": true,
+        "exif_missing": false,
+        "device_type": "camera",
+        "datetime_valid": true,
+        "gps_accuracy": "no_gps"
+    },
+    "summary": {
+        "device": "Canon Canon EOS 40D",
+        "highlights": "Edited with software"
+    }
+}

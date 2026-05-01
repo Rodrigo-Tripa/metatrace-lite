@@ -1,0 +1,15 @@
+{
+    "filename": "/home/semideus/projects/metatrace-lite/samples/test1.jpg",
+    "metadata": {},
+    "analysis": {
+        "gps_present": false,
+        "editing_software_detected": false,
+        "exif_missing": true,
+        "device_type": "unknown",
+        "datetime_valid": false,
+        "gps_accuracy": "no_gps"
+    },
+    "summary": {
+        "highlights": "No notable findings"
+    }
+}

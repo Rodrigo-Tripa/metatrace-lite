@@ -1,0 +1,94 @@
+{
+    "filename": "/home/semideus/projects/metatrace-lite/samples/test3.jpg",
+    "metadata": {
+        "camera": {
+            "exifoffset": "241",
+            "gpsinfo": "20464",
+            "imagewidth": "4032",
+            "imagelength": "3024",
+            "make": "Google",
+            "model": "Pixel 2",
+            "orientation": "Horizontal (normal)",
+            "xresolution": "72",
+            "yresolution": "72",
+            "resolutionunit": "Pixels/Inch",
+            "software": "HDR+ 1.0.199571065z",
+            "datetime": "2018:08:22 13:13:41",
+            "ycbcrpositioning": "Centered"
+        },
+        "datetime": {
+            "datetimeoriginal": "2018-08-22T13:13:41",
+            "datetimedigitized": "2018-08-22T13:13:41"
+        },
+        "gps": {
+            "gpsversionid": "[2, 2, 0, 0]",
+            "gpslatituderef": "N",
+            "gpslatitude": "[51, 30, 739/50]",
+            "gpslongituderef": "W",
+            "gpslongitude": "[0, 4, 2847/100]",
+            "gpsaltituderef": "0",
+            "gpsaltitude": "1947/25",
+            "gpstimestamp": "[12, 13, 40]",
+            "gpsdop": "2393/200",
+            "gpsprocessingmethod": "[65, 83, 67, 73, 73, 0, 0, 0, 102, 117, 115, 101, 100]",
+            "gpsdate": "2018:08:22",
+            "decimal_latitude": 51.504106,
+            "decimal_longitude": -0.074575
+        },
+        "image": {
+            "exposuretime": "299/1000000",
+            "fnumber": "9/5",
+            "exposureprogram": "Program Normal",
+            "isospeedratings": "75",
+            "exifversion": "0220",
+            "componentsconfiguration": "YCbCr",
+            "shutterspeedvalue": "1171/100",
+            "aperturevalue": "17/10",
+            "brightnessvalue": "441/50",
+            "exposurebiasvalue": "0",
+            "maxaperturevalue": "17/10",
+            "subjectdistance": "367/200",
+            "meteringmode": "CenterWeightedAverage",
+            "flash": "Flash did not fire, compulsory flash mode",
+            "focallength": "2221/500",
+            "makernote": "[72, 68, 82, 80, 2, 239, 100, 53, 109, 94, 112, 30, 44, 234, 227, 77, 87, 80, 136, 89, ... ]",
+            "subsectime": "594779",
+            "subsectimeoriginal": "594779",
+            "subsectimedigitized": "594779",
+            "flashpixversion": "0100",
+            "colorspace": "sRGB",
+            "exifimagewidth": "4032",
+            "exifimagelength": "3024",
+            "interoperabilityoffset": "20434",
+            "sensingmethod": "One-chip color area",
+            "scenetype": "Directly Photographed",
+            "customrendered": "Custom",
+            "exposuremode": "Auto Exposure",
+            "whitebalance": "Auto",
+            "digitalzoomratio": "0",
+            "focallengthin35mmfilm": "27",
+            "scenecapturetype": "Standard",
+            "contrast": "Normal",
+            "saturation": "Normal",
+            "sharpness": "Normal",
+            "subjectdistancerange": "2"
+        },
+        "other": {
+            "interoperability_interoperabilityindex": "R98",
+            "interoperability_interoperabilityversion": "[48, 49, 48, 48]"
+        }
+    },
+    "analysis": {
+        "gps_present": true,
+        "editing_software_detected": false,
+        "exif_missing": false,
+        "device_type": "phone",
+        "datetime_valid": false,
+        "gps_accuracy": "low"
+    },
+    "summary": {
+        "device": "Google Pixel 2",
+        "location": "Lat: 51.504106, Lon: -0.074575",
+        "highlights": "Contains GPS data; Captured on mobile device"
+    }
+}
