@@ -104,17 +104,29 @@ def _parse_datetime(dt_str: str) -> str:
         return dt_str
 
 def _parse_gps_coord(coord_str: str, ref: str) -> float:
-    """Parses GPS coordinate string to decimal degrees."""
+    """Parses GPS coordinate string to decimal degrees safely."""
     try:
-        # coord_str like "[37, 47, 1234/100]" for degrees, minutes, seconds
+        # coord_str example: "[37, 47, 1234/100]"
         parts = coord_str.strip("[]").split(", ")
+
         degrees = float(parts[0])
         minutes = float(parts[1])
-        seconds = eval(parts[2])  # e.g., 1234/100
 
-        decimal = degrees + minutes / 60 + seconds / 3600
+        # Safe parsing instead of eval()
+        seconds_raw = parts[2]
+
+        if "/" in seconds_raw:
+            numerator, denominator = seconds_raw.split("/")
+            seconds = float(numerator) / float(denominator)
+        else:
+            seconds = float(seconds_raw)
+
+        decimal = degrees + (minutes / 60) + (seconds / 3600)
+
         if ref in ["S", "W"]:
             decimal = -decimal
+
         return round(decimal, 6)
-    except:
+
+    except (ValueError, IndexError, ZeroDivisionError):
         return None
