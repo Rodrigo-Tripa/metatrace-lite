@@ -1,6 +1,6 @@
 # MetaTrace Lite
 
-![Version](https://img.shields.io/badge/version-0.4.0-blue)
+![Version](https://img.shields.io/badge/version-0.4.1-blue)
 ![Status](https://img.shields.io/badge/status-stable-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.x-green)
@@ -49,16 +49,16 @@ Modules are separated for integrity, maintainability, and forensic consistency.
 
 ## Usage
 
-To run a forensic analysis on an image, use the following command:
+To run a forensic analysis on an image or a folder of images, use the following command:
 
 ```bash
-python main.py [IMAGE_PATH] [OPTIONS]
+python main.py [PATH] [OPTIONS]
 ```
 
 ### Available Arguments:
 
-- `IMAGE_PATH`: The relative or absolute path to the image file (e.g., `.jpg`, `.tiff`).
-- `-o OUTPUT_DIR, --output-dir OUTPUT_DIR`: Directory to save the report file (default: `reports`).
+- `PATH`: The relative or absolute path to an image file or a directory containing images.
+- `-o OUTPUT_DIR, --output-dir OUTPUT_DIR`: Directory to save the report file(s) (default: `reports`).
 - `-v, --verbose`: Enable debug logging.
 - `-h, --help`: Show the help message and list all available options.
 
@@ -291,7 +291,7 @@ Follow the Principle of Least Privilege.
 - [x] GPS coordinate conversion to decimal degrees.
 - [x] Enhanced forensic analysis (device type, datetime, GPS accuracy).
 - [x] Readable JSON output with summary section.
-- [ ] Batch processing support (directories).
+- [x] Batch processing support (directories).
 - [ ] XMP and ICC Profile data extraction.
 - [ ] Simplified Web Interface for evidence upload.
 
