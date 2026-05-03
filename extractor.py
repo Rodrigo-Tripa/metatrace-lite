@@ -4,7 +4,7 @@
 import exifread
 import logging
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -103,7 +103,7 @@ def _parse_datetime(dt_str: str) -> str:
     except ValueError:
         return dt_str
 
-def _parse_gps_coord(coord_str: str, ref: str) -> float:
+def _parse_gps_coord(coord_str: str, ref: str) -> Optional[float]:
     """Parses GPS coordinate string to decimal degrees safely."""
     try:
         # coord_str example: "[37, 47, 1234/100]"
