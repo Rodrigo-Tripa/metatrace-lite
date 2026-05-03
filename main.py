@@ -50,7 +50,11 @@ def _generate_summary(metadata: Dict[str, Any], analysis: Dict[str, Any]) -> Dic
     return summary
 
 def main():
-    # 1. Setup Argument Parser for better CLI experience
+    """Main entry point for the MetaTrace Lite application.
+    
+    Parses command-line arguments, processes input files, extracts and analyzes metadata,
+    and outputs results in JSON format.
+    """
     parser = argparse.ArgumentParser(
         description="MetaTrace Lite: Lightweight forensic tool for image metadata analysis."
     )
