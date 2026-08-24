@@ -1,7 +1,7 @@
 # Name: MetaTrace Lite
 # Author: Rodrigo-Tripa (GitHub)
 # Description: Lightweight forensic tool for extracting and analyzing image metadata (EXIF)
-# Version: 0.4.1
+# Version: 0.4.2 (Updated with bug fixes)
 
 from utils import validate_input_path, collect_input_paths, export_metadata_to_file
 from extractor import extract_metadata
@@ -17,7 +17,14 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 def _generate_summary(metadata: Dict[str, Any], analysis: Dict[str, Any]) -> Dict[str, str]:
-    """Generates a human-readable summary of the metadata and analysis."""
+    """Generates a human-readable summary of the metadata and analysis.
+    
+    Extracts key forensic indicators:
+    - Device information (make, model)
+    - Capture timestamp
+    - Geographic coordinates (if present)
+    - Notable analysis findings
+    """
     summary = {}
 
     # Camera info
@@ -42,9 +49,13 @@ def _generate_summary(metadata: Dict[str, Any], analysis: Dict[str, Any]) -> Dic
     if analysis.get("editing_software_detected"):
         highlights.append("Edited with software")
     if analysis.get("gps_present"):
-        highlights.append("Contains GPS data")
+        accuracy = analysis.get("gps_accuracy", "unknown")
+        highlights.append(f"Contains GPS data ({accuracy} accuracy)")
     if analysis.get("device_type") == "phone":
         highlights.append("Captured on mobile device")
+    elif analysis.get("device_type") == "camera":
+        highlights.append("Captured on dedicated camera")
+    
     summary["highlights"] = "; ".join(highlights) if highlights else "No notable findings"
 
     return summary
@@ -54,6 +65,14 @@ def main():
     
     Parses command-line arguments, processes input files, extracts and analyzes metadata,
     and outputs results in JSON format.
+    
+    Workflow:
+    1. Validate input path (file or directory)
+    2. Collect all supported image files
+    3. Extract metadata from each file
+    4. Perform forensic analysis
+    5. Generate human-readable summary
+    6. Export results to JSON and stdout
     """
     parser = argparse.ArgumentParser(
         description="MetaTrace Lite: Lightweight forensic tool for image metadata analysis."
@@ -67,32 +86,63 @@ def main():
     # Adjust log level based on verbosity flag
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
+        logger.debug("Debug logging enabled")
 
     path = args.path
 
     try:
-        # 3. Validate the input path and determine whether it is a file or directory
+        # Validate the input path and determine whether it is a file or directory
+        logger.debug(f"Validating input path: {path}")
         validated_path = validate_input_path(path)
         input_paths = collect_input_paths(validated_path)
+        
+        logger.info(f"Found {len(input_paths)} image(s) to process")
 
-        # 4. Process files sequentially and aggregate results
+        # Process files sequentially and aggregate results
         results: List[Dict[str, Any]] = []
-        for file_path in input_paths:
-            logger.info(f"Processing file: {file_path}")
-            result = extract_metadata(file_path)
-            analysis = analyze_metadata(result["metadata"])
-            result["analysis"] = analysis
-            result["summary"] = _generate_summary(result["metadata"], analysis)
+        failed_files: List[Dict[str, Any]] = []
+        
+        for idx, file_path in enumerate(input_paths, 1):
+            logger.info(f"[{idx}/{len(input_paths)}] Processing file: {file_path}")
+            
+            try:
+                result = extract_metadata(file_path)
+                analysis = analyze_metadata(result["metadata"])
+                result["analysis"] = analysis
+                result["summary"] = _generate_summary(result["metadata"], analysis)
 
-            export_metadata_to_file(result, file_path, args.output_dir)
-            logger.info(f"Report successfully exported to: {args.output_dir}/{file_path.stem}_report.json")
-            results.append(result)
+                export_metadata_to_file(result, file_path, args.output_dir)
+                logger.info(f"Report successfully exported to: {args.output_dir}/{file_path.stem}_report.json")
+                results.append(result)
+            except Exception as e:
+                logger.error(f"Failed to process {file_path}: {e}")
+                failed_files.append({
+                    "filename": str(file_path),
+                    "error": str(e)
+                })
 
+        # Print summary of processing
+        if failed_files:
+            logger.warning(f"{len(failed_files)} file(s) failed to process")
+        
+        # Output results
         # 5. Print a single object for one file or a list for batch mode
         if len(results) == 1:
             print(json.dumps(results[0], indent=4))
+        elif len(results) > 1:
+            output = {
+                "summary": {
+                    "total_processed": len(results),
+                    "total_failed": len(failed_files)
+                },
+                "results": results
+            }
+            if failed_files:
+                output["failed"] = failed_files
+            print(json.dumps(output, indent=4))
         else:
-            print(json.dumps(results, indent=4))
+            logger.error("No files were successfully processed")
+            sys.exit(1)
 
     except FileNotFoundError:
         logger.error(f"File not found: {path}")
