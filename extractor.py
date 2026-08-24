@@ -49,7 +49,15 @@ def extract_metadata(path: Path) -> Dict[str, Any]:
     return result
 
 def _structure_metadata(exif_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Structures raw EXIF data into categorized, human-readable metadata."""
+    """Structures raw EXIF data into categorized, human-readable metadata.
+    
+    Categories:
+    - camera: Device info (make, model, software)
+    - datetime: Timestamp information (original, digitized)
+    - gps: Geolocation data (coordinates, altitude, accuracy)
+    - image: Technical image properties (resolution, orientation, exposure)
+    - other: Miscellaneous tags
+    """
     structured = {
         "camera": {},
         "datetime": {},
@@ -66,10 +74,11 @@ def _structure_metadata(exif_data: Dict[str, Any]) -> Dict[str, Any]:
         if "Thumbnail" in key_str or "Padding" in key_str:
             continue
 
-        # Categorize
+        # Categorize EXIF tags properly
+        # FIXED: "Image *" tags (resolution, orientation) should go to "image", not "camera"
         if key_str.startswith("Image "):
             subkey = key_str[6:].lower().replace(" ", "_")
-            structured["camera"][subkey] = value_str
+            structured["image"][subkey] = value_str
         elif key_str.startswith("EXIF "):
             subkey = key_str[5:].lower().replace(" ", "_")
             if "datetime" in subkey:
@@ -82,12 +91,23 @@ def _structure_metadata(exif_data: Dict[str, Any]) -> Dict[str, Any]:
         else:
             structured["other"][key_str.lower().replace(" ", "_")] = value_str
 
-    # Special handling for GPS coordinates
+    # Special handling for GPS coordinates with validation
     if "gpslatitude" in structured["gps"] and "gpslongitude" in structured["gps"]:
-        lat = _parse_gps_coord(structured["gps"]["gpslatitude"], structured["gps"].get("gpslatituderef", "N"))
-        lon = _parse_gps_coord(structured["gps"]["gpslongitude"], structured["gps"].get("gpslongituderef", "E"))
-        structured["gps"]["decimal_latitude"] = lat
-        structured["gps"]["decimal_longitude"] = lon
+        lat = _parse_gps_coord(
+            structured["gps"]["gpslatitude"], 
+            structured["gps"].get("gpslatituderef", "N")
+        )
+        lon = _parse_gps_coord(
+            structured["gps"]["gpslongitude"], 
+            structured["gps"].get("gpslongituderef", "E")
+        )
+        
+        # Only store if both coordinates parsed successfully
+        if lat is not None and lon is not None:
+            structured["gps"]["decimal_latitude"] = lat
+            structured["gps"]["decimal_longitude"] = lon
+        else:
+            logger.warning(f"GPS coordinates could not be parsed or are out of valid range")
 
     # Remove empty categories
     structured = {k: v for k, v in structured.items() if v}
@@ -95,7 +115,23 @@ def _structure_metadata(exif_data: Dict[str, Any]) -> Dict[str, Any]:
     return structured
 
 def _parse_datetime(dt_str: str) -> str:
-    """Parses EXIF datetime string to a more readable format."""
+    """Parses EXIF datetime string to ISO 8601 format.
+    
+    IMPORTANT: EXIF timestamps are naive (no timezone information).
+    The actual timezone depends on device settings and is not stored in EXIF metadata.
+    This means a timestamp like "2021-05-15T14:30:45" could represent any timezone.
+    
+    For forensic purposes, note that timestamps can be:
+    - Inaccurate (device clock can be wrong)
+    - Manipulated (EXIF data can be edited)
+    - Misleading (device timezone may not match capture location)
+    
+    Args:
+        dt_str: EXIF datetime string in format "YYYY:MM:DD HH:MM:SS"
+    
+    Returns:
+        ISO 8601 formatted datetime string (naive, no timezone)
+    """
     try:
         # EXIF datetime is YYYY:MM:DD HH:MM:SS
         dt = datetime.strptime(dt_str, "%Y:%m:%d %H:%M:%S")
@@ -104,7 +140,24 @@ def _parse_datetime(dt_str: str) -> str:
         return dt_str
 
 def _parse_gps_coord(coord_str: str, ref: str) -> Optional[float]:
-    """Parses GPS coordinate string to decimal degrees safely."""
+    """Parses GPS coordinate string to decimal degrees with range validation.
+    
+    GPS coordinates in EXIF are stored as:
+    - Degrees, Minutes, Seconds (DMS) format
+    - Example: "[37, 47, 1234/100]" = 37° 47' 12.34"
+    
+    FIXED: Now validates that coordinates are within valid ranges:
+    - Latitude: -90 to +90 degrees
+    - Longitude: -180 to +180 degrees
+    - Invalid coordinates are logged and return None
+    
+    Args:
+        coord_str: GPS coordinate string in DMS format
+        ref: Reference direction (N/S for latitude, E/W for longitude)
+    
+    Returns:
+        Decimal degree coordinate (float) or None if invalid/unparseable
+    """
     try:
         # coord_str example: "[37, 47, 1234/100]"
         parts = coord_str.strip("[]").split(", ")
@@ -112,7 +165,7 @@ def _parse_gps_coord(coord_str: str, ref: str) -> Optional[float]:
         degrees = float(parts[0])
         minutes = float(parts[1])
 
-        # Safe parsing instead of eval()
+        # Safe parsing of seconds (can be fraction)
         seconds_raw = parts[2]
 
         if "/" in seconds_raw:
@@ -121,12 +174,27 @@ def _parse_gps_coord(coord_str: str, ref: str) -> Optional[float]:
         else:
             seconds = float(seconds_raw)
 
+        # Convert DMS to decimal degrees
         decimal = degrees + (minutes / 60) + (seconds / 3600)
 
+        # Apply reference direction (South and West are negative)
         if ref in ["S", "W"]:
             decimal = -decimal
 
+        # Validate range based on coordinate type
+        if ref in ["N", "S"]:
+            # Latitude must be between -90 and +90
+            if not (-90 <= decimal <= 90):
+                logger.warning(f"Invalid latitude value: {decimal} (ref={ref})")
+                return None
+        elif ref in ["E", "W"]:
+            # Longitude must be between -180 and +180
+            if not (-180 <= decimal <= 180):
+                logger.warning(f"Invalid longitude value: {decimal} (ref={ref})")
+                return None
+
         return round(decimal, 6)
 
-    except (ValueError, IndexError, ZeroDivisionError):
+    except (ValueError, IndexError, ZeroDivisionError) as e:
+        logger.debug(f"Failed to parse GPS coordinate '{coord_str}' with ref '{ref}': {e}")
         return None
